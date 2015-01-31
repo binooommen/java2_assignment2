@@ -147,12 +147,13 @@ public class OrderQueueTest {
     public void testWhenOrderTimeRecievedAndOrderQuantityInInventoryThenSetTimeToNow() throws Exception {
         OrderQueue orderQueue = new OrderQueue();
         Order ord = new Order("CUST00001", "DEF");
-        ord.addPurchase(new Purchase(003, 450));
-        ord.addPurchase(new Purchase(002, 250));
+        ord.addPurchase(new Purchase(003, 4));
+        ord.addPurchase(new Purchase(002, 2));
         orderQueue.add(ord);
         orderQueue.process(ord);
         Date expectedResult = new Date();
-        assertEquals(expectedResult, ord.getTimeProcessed());
+        Date result = ord.getTimeProcessed();
+        assertEquals(expectedResult, result);
     }
 
     @Test
