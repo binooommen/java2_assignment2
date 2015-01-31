@@ -68,7 +68,7 @@ public class OrderQueueTest {
     public void testWhenCustomerIDAndCustomerNameNotExistThenThrowException() {
         boolean check = false;
         OrderQueue orderQueue = new OrderQueue();
-        Order ord = new Order(null, null);
+        Order ord = new Order("", "");
         try {
             orderQueue.add(ord);
         } catch (customerEmptyException e) {
@@ -131,11 +131,13 @@ public class OrderQueueTest {
     @Test
     public void testWhenOrderTimeRecievedNotSetThrowException() throws Exception {
         OrderQueue orderQueue = new OrderQueue();
-        Order ord = new Order(null, null);
+        Order ord = new Order("CUST00001", "DEF");
+        ord.addPurchase(new Purchase(003, 4500));
+        ord.addPurchase(new Purchase(002, 2500));
         boolean check = false;
         try {
             orderQueue.process(ord);
-        } catch (noRecievedTimeException e) {
+        } catch (noRecievedTimeException eq) {
             check = true;
         } catch (Exception e) {
             check = false;
@@ -162,10 +164,11 @@ public class OrderQueueTest {
         Order ord = new Order("CUST00001", "DEF");
         ord.addPurchase(new Purchase(003, 4500));
         ord.addPurchase(new Purchase(002, 2500));
+        orderQueue.add(ord);
         boolean check = false;
         try {
             orderQueue.process(ord);
-        } catch (noQuantityInInventoryException e) {
+        } catch (noQuantityInInventoryException eq) {
             check = true;
         } catch (Exception e) {
             check = false;
