@@ -64,5 +64,66 @@ public class OrderQueueTest {
         long result = order.getTimeReceived().getTime();
         assertTrue(Math.abs(result - expResult) < 1000);
     }
+
+        
+    @Test
+    public void testWhenCustomerIDAndCustomerNameNotExistThenThrowException() {
+        boolean check = false;
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order(null, null);
+        try {
+            orderQueue.add(ord);
+        } catch (Exception e) {
+            check = true;
+        }
+        assertTrue(check);
+    }
+    
+    @Test
+    public void testWhenListOfPurchasesDoesNotExistThenThrowException() throws Exception {
+        boolean check = false;
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order("CUST00002", "XYZ");
+        try {
+           orderQueue.add(ord);
+        } catch (Exception e) {
+            check = true;
+        }
+        assertTrue(check);
+    }
+    
+    @Test
+    public void testWhenThereAreOrdersInSystemThenReturnEarliestTimeRecievedOrder() throws Exception {
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order("CUST00003", "RST");
+        ord.addPurchase(new Purchase("PROD00001", 4));
+        ord.addPurchase(new Purchase("PROD00002", 2));
+        orderQueue.add(ord);
+        
+        Order ord1 = new Order("CUST00004", "PDR");
+        ord1.addPurchase(new Purchase("PROD00003", 5));
+        ord1.addPurchase(new Purchase("PROD00004", 5));
+        orderQueue.add(ord1);
+        
+        Order ord2 = new Order("CUST00005", "UVW");
+        ord2.addPurchase(new Purchase("PROD00005", 5));
+        ord2.addPurchase(new Purchase("PROD00006", 5));
+        orderQueue.add(ord2);
+        
+        assertEquals(ord, orderQueue.next());
+    }
+    
+    @Test
+    public void testWhenNoOrdersInSystemThenReturnNull() {
+        OrderQueue queue = new OrderQueue();
+        Order expectedResult = null;
+        String result = "";
+        try {
+            queue.next();
+        } catch (Exception e) {
+            result = null;
+        }
+        assertEquals(expectedResult, result);
+    }
     
 }

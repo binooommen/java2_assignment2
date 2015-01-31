@@ -43,4 +43,7 @@ public class OrderQueue {
             ord.setTimeReceived(new Date());
         }
     }
+    public Order next() {
+        return orderQueue.element();
+    }
 }
