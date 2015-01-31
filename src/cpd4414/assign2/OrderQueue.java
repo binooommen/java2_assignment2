@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package cpd4414.assign2;
 
 import java.util.ArrayDeque;
@@ -27,31 +26,31 @@ import java.util.Queue;
  * @author Bino Oommen Samuel < binooommen37@gmail.com >
  */
 public class OrderQueue {
+
     Queue<Order> orderQueue = new ArrayDeque<>();
     Queue<Order> processQueue = new ArrayDeque<>();
-    
+
     public void add(Order ord) throws Exception {
         String customerId = ord.getCustomerId();
         String customerName = ord.getCustomerName();
         List<Purchase> listOfPurchase = ord.getListOfPurchases();
-        if(customerId.isEmpty() || customerName.isEmpty()){
+        if (customerId.isEmpty() || customerName.isEmpty()) {
             throw new customerEmptyException();
-        }
-        else if(listOfPurchase.isEmpty()){
+        } else if (listOfPurchase.isEmpty()) {
             throw new listEmptyException();
-        }
-        else{
+        } else {
             orderQueue.add(ord);
             ord.setTimeReceived(new Date());
         }
     }
+
     public Order next() {
         return orderQueue.element();
     }
-    
+
     public void process(Order ord) throws Exception {
-        if(ord.getTimeReceived() == null) {
-            throw new Exception("No time recieved.");
+        if (ord.getTimeReceived() == null) {
+            throw new noRecievedTimeException();
         }
         for (Purchase item : ord.getListOfPurchases()) {
             // Product quantity from database
@@ -60,7 +59,7 @@ public class OrderQueue {
             int qtyFromOrder = item.getQuantity();
             // If qty in order is greater than qty in inventory throw exception
             if (qtyFromOrder > prodQtyFromDB) {
-                throw new Exception("Quantity for product id "+item.getProductId()+" in the inventory is only "+prodQtyFromDB);
+                throw new noQuantityInInventoryException("Quantity for product id " + item.getProductId() + " in the inventory is only " + prodQtyFromDB);
             }
         }
         ord.setTimeProcessed(new Date());

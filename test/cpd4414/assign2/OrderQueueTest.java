@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package cpd4414.assign2;
 
 import cpd4414.assign2.OrderQueue;
@@ -32,22 +31,22 @@ import org.junit.Test;
  * @author Bino Oommen Samuel < binooommen37@gmail.com >
  */
 public class OrderQueueTest {
-    
+
     public OrderQueueTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -59,13 +58,12 @@ public class OrderQueueTest {
         order.addPurchase(new Purchase(004, 450));
         order.addPurchase(new Purchase(006, 250));
         orderQueue.add(order);
-        
+
         long expResult = new Date().getTime();
         long result = order.getTimeReceived().getTime();
         assertTrue(Math.abs(result - expResult) < 1000);
     }
 
-        
     @Test
     public void testWhenCustomerIDAndCustomerNameNotExistThenThrowException() {
         boolean check = false;
@@ -73,29 +71,29 @@ public class OrderQueueTest {
         Order ord = new Order(null, null);
         try {
             orderQueue.add(ord);
-        }catch(customerEmptyException e){
+        } catch (customerEmptyException e) {
             check = true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             check = false;
         }
         assertTrue(check);
     }
-    
+
     @Test
     public void testWhenListOfPurchasesDoesNotExistThenThrowException() throws Exception {
         boolean check = false;
         OrderQueue orderQueue = new OrderQueue();
         Order ord = new Order("CUST00002", "XYZ");
         try {
-           orderQueue.add(ord);
-        }catch(listEmptyException e){
+            orderQueue.add(ord);
+        } catch (listEmptyException e) {
             check = true;
         } catch (Exception e) {
             check = true;
         }
         assertTrue(check);
     }
-    
+
     @Test
     public void testWhenThereAreOrdersInSystemThenReturnEarliestTimeRecievedOrder() throws Exception {
         OrderQueue orderQueue = new OrderQueue();
@@ -103,20 +101,20 @@ public class OrderQueueTest {
         ord.addPurchase(new Purchase(001, 4));
         ord.addPurchase(new Purchase(002, 2));
         orderQueue.add(ord);
-        
+
         Order ord1 = new Order("CUST00004", "PDR");
         ord1.addPurchase(new Purchase(003, 5));
         ord1.addPurchase(new Purchase(004, 5));
         orderQueue.add(ord1);
-        
+
         Order ord2 = new Order("CUST00005", "UVW");
         ord2.addPurchase(new Purchase(005, 5));
         ord2.addPurchase(new Purchase(0006, 5));
         orderQueue.add(ord2);
-        
+
         assertEquals(ord, orderQueue.next());
     }
-    
+
     @Test
     public void testWhenNoOrdersInSystemThenReturnNull() {
         OrderQueue queue = new OrderQueue();
@@ -129,5 +127,49 @@ public class OrderQueueTest {
         }
         assertEquals(expectedResult, result);
     }
-    
+
+    @Test
+    public void testWhenOrderTimeRecievedNotSetThrowException() throws Exception {
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order(null, null);
+        boolean check = false;
+        try {
+            orderQueue.process(ord);
+        } catch (noRecievedTimeException e) {
+            check = true;
+        } catch (Exception e) {
+            check = false;
+        }
+        assertTrue(check);
+    }
+
+    @Test
+    public void testWhenOrderTimeRecievedAndOrderQuantityInInventoryThenSetTimeToNow() throws Exception {
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order("CUST00001", "DEF");
+        ord.addPurchase(new Purchase(003, 450));
+        ord.addPurchase(new Purchase(002, 250));
+        orderQueue.add(ord);
+        orderQueue.process(ord);
+        Date expectedResult = new Date();
+        assertEquals(expectedResult, ord.getTimeProcessed());
+    }
+
+    @Test
+    public void testWhenOrderDoesNotHaveQuantityInInventoryThenThrowException() throws Exception {
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order("CUST00001", "DEF");
+        ord.addPurchase(new Purchase(003, 4500));
+        ord.addPurchase(new Purchase(002, 2500));
+        boolean check = false;
+        try {
+            orderQueue.process(ord);
+        } catch (noQuantityInInventoryException e) {
+            check = true;
+        } catch (Exception e) {
+            check = false;
+        }
+        assertTrue(check);
+    }
+
 }
