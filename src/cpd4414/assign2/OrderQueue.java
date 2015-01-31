@@ -38,10 +38,9 @@ public class OrderQueue {
             throw new customerEmptyException();
         } else if (listOfPurchase.isEmpty()) {
             throw new listEmptyException();
-        } else {
-            orderQueue.add(ord);
-            ord.setTimeReceived(new Date());
         }
+        orderQueue.add(ord);
+        ord.setTimeReceived(new Date());
     }
 
     public Order next() {
