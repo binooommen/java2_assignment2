@@ -17,6 +17,7 @@
 package cpd4414.assign2;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Queue;
@@ -27,6 +28,7 @@ import java.util.Queue;
  */
 public class OrderQueue {
     Queue<Order> orderQueue = new ArrayDeque<>();
+    Queue<Order> processQueue = new ArrayDeque<>();
     
     public void add(Order ord) throws Exception {
         String customerId = ord.getCustomerId();
@@ -45,5 +47,24 @@ public class OrderQueue {
     }
     public Order next() {
         return orderQueue.element();
+    }
+    
+    public void process(Order ord) throws Exception {
+        if(ord.getTimeReceived() == null) {
+            throw new Exception("No time recieved.");
+        }
+        for (Purchase item : ord.getListOfPurchases()) {
+            // Product quantity from database
+            int prodQtyFromDB = Inventory.getQuantityForId(item.getProductId());
+            // Product quantity from order
+            int qtyFromOrder = item.getQuantity();
+            // If qty in order is greater than qty in inventory throw exception
+            if (qtyFromOrder > prodQtyFromDB) {
+                throw new Exception("Quantity for product id "+item.getProductId()+" in the inventory is only "+prodQtyFromDB);
+            }
+        }
+        ord.setTimeProcessed(new Date());
+        orderQueue.remove(ord);
+        processQueue.add(ord);
     }
 }

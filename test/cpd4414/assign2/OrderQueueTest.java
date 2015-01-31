@@ -56,8 +56,8 @@ public class OrderQueueTest {
     public void testWhenCustomerExistsAndPurchasesExistThenTimeReceivedIsNow() throws Exception {
         OrderQueue orderQueue = new OrderQueue();
         Order order = new Order("CUST00001", "ABC Construction");
-        order.addPurchase(new Purchase("PROD0004", 450));
-        order.addPurchase(new Purchase("PROD0006", 250));
+        order.addPurchase(new Purchase(004, 450));
+        order.addPurchase(new Purchase(006, 250));
         orderQueue.add(order);
         
         long expResult = new Date().getTime();
@@ -73,8 +73,10 @@ public class OrderQueueTest {
         Order ord = new Order(null, null);
         try {
             orderQueue.add(ord);
-        } catch (Exception e) {
+        }catch(customerEmptyException e){
             check = true;
+        }catch (Exception e) {
+            check = false;
         }
         assertTrue(check);
     }
@@ -86,6 +88,8 @@ public class OrderQueueTest {
         Order ord = new Order("CUST00002", "XYZ");
         try {
            orderQueue.add(ord);
+        }catch(listEmptyException e){
+            check = true;
         } catch (Exception e) {
             check = true;
         }
@@ -96,18 +100,18 @@ public class OrderQueueTest {
     public void testWhenThereAreOrdersInSystemThenReturnEarliestTimeRecievedOrder() throws Exception {
         OrderQueue orderQueue = new OrderQueue();
         Order ord = new Order("CUST00003", "RST");
-        ord.addPurchase(new Purchase("PROD00001", 4));
-        ord.addPurchase(new Purchase("PROD00002", 2));
+        ord.addPurchase(new Purchase(001, 4));
+        ord.addPurchase(new Purchase(002, 2));
         orderQueue.add(ord);
         
         Order ord1 = new Order("CUST00004", "PDR");
-        ord1.addPurchase(new Purchase("PROD00003", 5));
-        ord1.addPurchase(new Purchase("PROD00004", 5));
+        ord1.addPurchase(new Purchase(003, 5));
+        ord1.addPurchase(new Purchase(004, 5));
         orderQueue.add(ord1);
         
         Order ord2 = new Order("CUST00005", "UVW");
-        ord2.addPurchase(new Purchase("PROD00005", 5));
-        ord2.addPurchase(new Purchase("PROD00006", 5));
+        ord2.addPurchase(new Purchase(005, 5));
+        ord2.addPurchase(new Purchase(0006, 5));
         orderQueue.add(ord2);
         
         assertEquals(ord, orderQueue.next());
