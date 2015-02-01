@@ -64,7 +64,7 @@ public class OrderQueue {
     }
 
     public void process(Order ord) throws Exception {
-        checkTimeReceivedProdQty(ord);  // check prod qty in db
+        checkTimeReceivedProdQty(ord);  // check prod qty and time recieved in db
         ord.setTimeProcessed(new Date());
         orderQueue.remove(ord);
         processQueue.add(ord);
