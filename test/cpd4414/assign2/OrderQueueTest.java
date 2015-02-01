@@ -55,8 +55,8 @@ public class OrderQueueTest {
     public void testWhenCustomerExistsAndPurchasesExistThenTimeReceivedIsNow() throws Exception {
         OrderQueue orderQueue = new OrderQueue();
         Order order = new Order("CUST00001", "ABC Construction");
-        order.addPurchase(new Purchase(004, 450));
-        order.addPurchase(new Purchase(006, 250));
+        order.addPurchase(new Purchase(004, 4));
+        order.addPurchase(new Purchase(006, 2));
         orderQueue.add(order);
 
         long expResult = new Date().getTime();
@@ -175,5 +175,49 @@ public class OrderQueueTest {
         }
         assertTrue(check);
     }
+    
+    @Test
+    public void testWhenOrderFulfilled() throws Exception {
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order("CUST00001", "ABC Construction");
+        ord.addPurchase(new Purchase(4, 4));
+        ord.addPurchase(new Purchase(6, 2));
+        orderQueue.add(ord);
+        orderQueue.process(ord);
+        orderQueue.fulfill(ord);
+        Date expectedResult = new Date();
+        Date result = ord.getTimeFulfilled();
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testInFulfilledOrderDoesNotHaveATimeRecievedThenThrowException() throws Exception {
+        testWhenOrderTimeRecievedNotSetThrowException();
+    }
+    
+    @Test
+    public void testInFulfilledOrderNotHaveQuantityInInventoryThenThrowException() throws Exception {
+        testWhenOrderDoesNotHaveQuantityInInventoryThenThrowException();
+    }
+    
+    @Test
+    public void testInFulfilledOrderDoesNotHaveATimeProcessedThenThrowException() throws Exception {
+        OrderQueue orderQueue = new OrderQueue();
+        Order ord = new Order("CUST00001", "ABC Construction");
+        ord.addPurchase(new Purchase(4, 4));
+        ord.addPurchase(new Purchase(6, 2));
+        orderQueue.add(ord);
+        boolean check = false;
+        try {
+            orderQueue.fulfill(ord);
+        } catch (noTimeProcessed eq) {
+            check = true;
+        } catch (Exception e) {
+            check = true;
+        }
+        assertTrue(check);
+    }
+    
+    
 
 }

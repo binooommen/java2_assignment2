@@ -46,8 +46,8 @@ public class OrderQueue {
     public Order next() {
         return orderQueue.element();
     }
-
-    public void process(Order ord) throws Exception {
+    
+    public void checkTimeReceivedProdQty(Order ord) throws noQuantityInInventoryException, noRecievedTimeException{
         if (ord.getTimeReceived() == null) {
             throw new noRecievedTimeException();
         }
@@ -61,8 +61,20 @@ public class OrderQueue {
                 throw new noQuantityInInventoryException("Quantity for product id " + item.getProductId() + " in the inventory is only " + prodQtyFromDB);
             }
         }
+    }
+
+    public void process(Order ord) throws Exception {
+        checkTimeReceivedProdQty(ord);  // check prod qty in db
         ord.setTimeProcessed(new Date());
         orderQueue.remove(ord);
         processQueue.add(ord);
+    }
+    
+    public void fulfill(Order ord) throws Exception {
+        checkTimeReceivedProdQty(ord);  // check prod qty in db
+        if (ord.getTimeProcessed() == null) {
+            throw new noTimeProcessed();
+        }
+        ord.setTimeFulfilled(new Date());
     }
 }
